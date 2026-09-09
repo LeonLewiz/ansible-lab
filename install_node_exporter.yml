@@ -8,7 +8,7 @@
         dest: /tmp
 
 - name: Extract
-  unarchive:
+  ansible.builtin.unarchive:
     src: /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
     dest: /tmp/exporterr/
     remote_src: true
