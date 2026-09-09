@@ -7,36 +7,36 @@
         url: https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
         dest: /tmp
 
-- name: Extract
-  ansible.builtin.unarchive:
-    src: /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
-    dest: /tmp/exporterr/
-    remote_src: true
+    - name: Extract
+      ansible.builtin.unarchive:
+        src: /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
+        dest: /tmp/exporterr/
+        remote_src: true
 
-- name: Copy to a proper dir
-  copy:
-    src: /tmp/exporterr/node_exporter-1.8.2.linux-amd64/node_exporter
-    dest: /usr/local/bin/node_exporter
-    remote_src: true
+    - name: Copy to a proper dir
+      copy:
+        src: /tmp/exporterr/node_exporter-1.8.2.linux-amd64/node_exporter
+        dest: /usr/local/bin/node_exporter
+        remote_src: true
 
-- name: Create systemd unit
-  ansible.builtin.copy:
-    dest: /etc/systemd/system/node_exporter.service
-    content: |
-      [Unit]
-      Description=Node Exporter
-      After=network.target
+    - name: Create systemd unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+          After=network.target
 
-      [Service]
-      ExecStart=/usr/local/bin/node_exporter --web.listen-address=0.0.0.0:9100
-      Restart=always
+          [Service]
+          ExecStart=/usr/local/bin/node_exporter --web.listen-address=0.0.0.0:9100
+          Restart=always
 
-      [Install]
-      WantedBy=multi-user.target
+          [Install]
+          WantedBy=multi-user.target
 
-- name: Enable and start node_exporter
-  ansible.builtin.systemd:
-    name: node_exporter
-    daemon_reload: true
-    enabled: true
-    state: started
+    - name: Enable and start node_exporter
+      ansible.builtin.systemd:
+        name: node_exporter
+        daemon_reload: true
+        enabled: true
+        state: started
