@@ -14,4 +14,4 @@ jobs:
 
       - name: Copy all files to ansible-lab
         run: |
-          cp -rT . ~/ansible-lab/
+          rsync -av --exclude='.git' ./ ~/ansible-lab/
