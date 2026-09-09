@@ -6,7 +6,13 @@
       get_url:
         url: https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
         dest: /tmp
-
+        
+    - name: Create a directory
+      ansible.builtin.file:
+        path: /tmp/exporterr
+        state: directory
+        mode: '0755'
+    
     - name: Extract
       ansible.builtin.unarchive:
         src: /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
