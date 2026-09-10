@@ -1,0 +1,67 @@
+- name: Install blackbox.
+  hosts: monitoring
+  become: yes
+  tasks:
+    - name: Installing blackbox.
+      get_url:
+        url: https://github.com/prometheus/blackbox_exporter/releases/download/v0.28.0/blackbox_exporter-0.28.0.linux-amd64.tar.gz
+        dest: /tmp
+        
+    - name: Create a directory
+      ansible.builtin.file:
+        path: /tmp/blackboxx
+        state: directory
+        mode: '0755'
+    
+    - name: Extract
+      ansible.builtin.unarchive:
+        src: /tmp/blackbox_exporter-0.28.0.linux-amd64.tar.gz
+        dest: /tmp/blackboxx/
+        remote_src: true
+
+    - name: Copy to a proper dir
+      copy:
+        src: /tmp/blackboxx/blackbox_exporter-0.28.0.linux-amd64/blackbox_exporter
+        dest: /usr/local/bin/blackbox_exporter
+        remote_src: true
+        mode: '0755'
+
+    - name: Create config dir
+      ansible.builtin.file:
+        path: /etc/blackbox
+        state: directory
+        mode: '0755'
+    
+    - name: Copy blackbox config
+      ansible.builtin.copy:
+        dest: /etc/blackbox/blackbox.yml
+        content: |
+          modules:
+            http_2xx:
+              prober: http
+              timeout: 5s
+              http:
+                valid_http_versions: ["HTTP/1.1", "HTTP/2"]
+                fail_if_ssl: false
+            
+    - name: Create systemd unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/blackbox_exporter.service
+        content: |
+          [Unit]
+          Description=Blackbox Exporter
+          After=network.target
+
+          [Service]
+          ExecStart=/usr/local/bin/blackbox_exporter --config.file=/etc/blackbox/blackbox.yml --web.listen-address=0.0.0.0:9115
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Enable and start blackbox_exporter
+      ansible.builtin.systemd:
+        name: blackbox_exporter
+        daemon_reload: true
+        enabled: true
+        state: started
