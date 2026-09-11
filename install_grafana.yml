@@ -16,7 +16,7 @@
 
     - name: Symlink for stable path
       ansible.builtin.file:
-        src: /opt/grafana-v13.2.1
+        src: /opt/grafana-13.2.1
         dest: /opt/grafana
         state: link
 
