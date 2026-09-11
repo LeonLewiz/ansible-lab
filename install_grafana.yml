@@ -34,6 +34,7 @@
 
           [Install]
           WantedBy=multi-user.target
+      notify: Restart Grafana
 
     - name: Copy config for Grafana.
       ansible.builtin.copy:
@@ -47,7 +48,7 @@
               access: proxy
               url: http://localhost:9090
               isDefault: true
-        notify: Restart Grafana
+      notify: Restart Grafana
 
     - name: Create dashboards provisioning dir
       ansible.builtin.file:
@@ -68,17 +69,24 @@
                 path: /opt/grafana/conf/provisioning/dashboards
       notify: Restart Grafana
 
-    - name: Copy dashboard JSON
+    - name: Copy dashboard JSON (Node Exporter)
       ansible.builtin.copy:
         src: files/dashboard.json
         dest: /opt/grafana/conf/provisioning/dashboards/dashboard.json
       notify: Restart Grafana
-      
+
+    - name: Copy dashboard JSON (cAdvisor)
+      ansible.builtin.copy:
+        src: files/cadvisor.json
+        dest: /opt/grafana/conf/provisioning/dashboards/cadvisor.json
+      notify: Restart Grafana
+
     - name: Enable Grafana
       ansible.builtin.systemd:
         name: grafana
         daemon_reload: true
         enabled: true
+        state: started
 
   handlers:
     - name: Restart Grafana
