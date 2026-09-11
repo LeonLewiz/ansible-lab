@@ -12,7 +12,7 @@
         src: /tmp/grafana-13.2.1.linux-amd64.tar.gz
         dest: /opt
         remote_src: true
-        creates: /opt/grafana-v13.2.1
+        creates: /opt/grafana-13.2.1
 
     - name: Symlink for stable path
       ansible.builtin.file:
@@ -35,9 +35,22 @@
           [Install]
           WantedBy=multi-user.target
 
+    - name: Copy config for Grafana.
+      ansible.builtin.copy:
+        dest: /opt/grafana/conf/provisioning/datasources/prometheus.yml
+        content: |
+          apiVersion: 1
+
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              access: proxy
+              url: http://localhost:9090
+              isDefault: true
+
     - name: Enable and start Grafana
       ansible.builtin.systemd:
         name: grafana
         daemon_reload: true
         enabled: true
-        state: started
+        state: restarted
