@@ -47,8 +47,7 @@
               access: proxy
               url: http://localhost:9090
               isDefault: true
-        notify: Restart Grafana 
-
+        notify: Restart Grafana
 
     - name: Enable Grafana
       ansible.builtin.systemd:
@@ -56,8 +55,8 @@
         daemon_reload: true
         enabled: true
 
-handlers: 
-  - name: Restart Grafana
-    ansible.builtin.systemd:
-      name: grafana
-      state: restarted
+  handlers:
+    - name: Restart Grafana
+      ansible.builtin.systemd:
+        name: grafana
+        state: restarted
