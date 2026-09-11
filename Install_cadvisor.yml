@@ -1,0 +1,20 @@
+- name: Install cAdvisor.
+  hosts: ubuntu_servers:debian_servers
+  become: yes
+  tasks:
+    - name: Run cAdvisor
+      community.docker.docker_container:
+        name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.60.5
+        state: started
+        restart_policy: always
+        privileged: true
+        published_ports:
+          - "8080:8080"
+        volumes:
+          - /:/rootfs:ro
+          - /var/run:/var/run:ro
+          - /sys:/sys:ro
+          - /var/lib/docker/:/var/lib/docker:ro
+          - /dev/disk/:/dev/disk:ro
+          - /dev/kmsg:/dev/kmsg
