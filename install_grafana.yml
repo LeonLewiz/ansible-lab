@@ -49,6 +49,31 @@
               isDefault: true
         notify: Restart Grafana
 
+    - name: Create dashboards provisioning dir
+      ansible.builtin.file:
+        path: /opt/grafana/conf/provisioning/dashboards
+        state: directory
+
+    - name: Copy dashboard provider
+      ansible.builtin.copy:
+        dest: /opt/grafana/conf/provisioning/dashboards/dashboards.yml
+        content: |
+          apiVersion: 1
+          providers:
+            - name: 'default'
+              type: file
+              disableDeletion: false
+              updateIntervalSeconds: 30
+              options:
+                path: /opt/grafana/conf/provisioning/dashboards
+      notify: Restart Grafana
+
+    - name: Copy dashboard JSON
+      ansible.builtin.copy:
+        src: files/dashboard.json
+        dest: /opt/grafana/conf/provisioning/dashboards/dashboard.json
+      notify: Restart Grafana
+      
     - name: Enable Grafana
       ansible.builtin.systemd:
         name: grafana
