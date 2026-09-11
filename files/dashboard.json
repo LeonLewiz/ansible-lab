@@ -4,16 +4,6 @@
   "metadata": {
     "name": "rYdddlPWk",
     "namespace": "default",
-    "uid": "ad177228-ef43-4def-823e-1bc135e95c56",
-    "resourceVersion": "1789140912908998",
-    "generation": 1,
-    "creationTimestamp": "2026-09-11T15:35:12Z",
-    "labels": {
-      "grafana.app/deprecatedInternalID": "4261371257278464"
-    },
-    "annotations": {
-      "grafana.app/createdBy": "user:bfxy09rqze5tsc",
-      "grafana.app/saved-from-ui": "Grafana v13.2.1 (56cd3e9288)"
     }
   },
   "spec": {
