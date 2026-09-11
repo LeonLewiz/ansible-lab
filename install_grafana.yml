@@ -1,0 +1,43 @@
+- name: Install Grafana.
+  hosts: monitoring
+  become: yes
+  tasks:
+    - name: Installing Grafana.
+      get_url:
+        url: https://dl.grafana.com/oss/release/grafana-13.2.1.linux-amd64.tar.gz
+        dest: /tmp/grafana-13.2.1.linux-amd64.tar.gz
+
+    - name: Extract grafana
+      ansible.builtin.unarchive:
+        src: /tmp/grafana-13.2.1.linux-amd64.tar.gz
+        dest: /opt
+        remote_src: true
+        creates: /opt/grafana-v13.2.1
+
+    - name: Symlink for stable path
+      ansible.builtin.file:
+        src: /opt/grafana-v13.2.1
+        dest: /opt/grafana
+        state: link
+
+    - name: Create systemd unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/grafana.service
+        content: |
+          [Unit]
+          Description=Grafana
+          After=network.target
+
+          [Service]
+          ExecStart=/opt/grafana/bin/grafana server --homepath /opt/grafana
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Enable and start Grafana
+      ansible.builtin.systemd:
+        name: grafana
+        daemon_reload: true
+        enabled: true
+        state: started
