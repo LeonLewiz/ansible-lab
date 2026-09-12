@@ -1,7 +1,14 @@
 - name: Install cAdvisor.
-  hosts: ubuntu_servers:debian_servers
+  hosts: all:!monitoring
   become: yes
   tasks:
+
+    - name: Install python3-requests
+      ansible.builtin.apt:
+        name: python3-requests
+        state: present
+
+
     - name: Run cAdvisor
       community.docker.docker_container:
         name: cadvisor
@@ -20,5 +27,4 @@
           - /var/run:/var/run:ro
           - /sys:/sys:ro
           - /var/lib/docker/:/var/lib/docker:ro
-          - /dev/disk/:/dev/disk:ro
           - /dev/kmsg:/dev/kmsg
