@@ -8,7 +8,7 @@
         state: present
 
 - name: Install Docker.
-  hosts: all
+  hosts: all:!monitoring
   become: yes
   tasks:
     - name: Installing curl, ca-certificates, gnupg
@@ -61,7 +61,7 @@
 
 
 - name: Clone repository.
-  hosts: all
+  hosts: all:!monitoring
   become: yes
   tasks:
     - name: Git clone.
@@ -76,4 +76,7 @@
         mode: '0600'
 
     - name: Compose the containers.
-      shell: cd /var/www/html/my-nginx-site && docker compose up -d --build
+      community.docker.docker_compose_v2:
+        project_src: "{{ project_dir }}"
+        state: present
+        build: policy
