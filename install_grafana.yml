@@ -6,6 +6,7 @@
       get_url:
         url: https://dl.grafana.com/oss/release/grafana-13.2.1.linux-amd64.tar.gz
         dest: /tmp/grafana-13.2.1.linux-amd64.tar.gz
+        checksum: sha256:849b3f17a0a318a2f1a681b663e9feb4e4fc7f70d43bb0b4ea07cd34b1987462
 
     - name: Extract grafana
       ansible.builtin.unarchive:
