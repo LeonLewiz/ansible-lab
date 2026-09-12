@@ -1,0 +1,12 @@
+scrape_configs:
+  - job_name: node
+    static_configs:
+      - targets:
+          - 192.168.13.133:9100
+          - 192.168.13.130:9100
+          - 192.168.13.134:9100
+  - job_name: cadvisor
+    static_configs:
+      - targets:
+          - 192.168.13.133:8080
+          - 192.168.13.134:8080

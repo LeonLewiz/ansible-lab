@@ -3,9 +3,8 @@
   "kind": "Dashboard",
   "metadata": {
     "name": "rYdddlPWk",
-    "namespace": "default",
-    }
-  },
+    "namespace": "default"
+   },
   "spec": {
     "annotations": [
       {
