@@ -39,16 +39,9 @@
 
     - name: Copy config for Grafana.
       ansible.builtin.copy:
+        src: ./files/provisioning/datasources/prometheus.yml
         dest: /opt/grafana/conf/provisioning/datasources/prometheus.yml
-        content: |
-          apiVersion: 1
-
-          datasources:
-            - name: Prometheus
-              type: prometheus
-              access: proxy
-              url: http://localhost:9090
-              isDefault: true
+        mode: 0644
       notify: Restart Grafana
 
     - name: Create dashboards provisioning dir
