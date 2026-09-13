@@ -49,30 +49,15 @@
         path: /opt/grafana/conf/provisioning/dashboards
         state: directory
 
-    - name: Copy dashboard provider
+    - name: Copy provisioning files
       ansible.builtin.copy:
-        dest: /opt/grafana/conf/provisioning/dashboards/dashboards.yml
-        content: |
-          apiVersion: 1
-          providers:
-            - name: 'default'
-              type: file
-              disableDeletion: false
-              updateIntervalSeconds: 30
-              options:
-                path: /opt/grafana/conf/provisioning/dashboards
-      notify: Restart Grafana
-
-    - name: Copy dashboard JSON (Node Exporter)
-      ansible.builtin.copy:
-        src: files/dashboard.json
-        dest: /opt/grafana/conf/provisioning/dashboards/dashboard.json
-      notify: Restart Grafana
-
-    - name: Copy dashboard JSON (cAdvisor)
-      ansible.builtin.copy:
-        src: files/cadvisor.json
-        dest: /opt/grafana/conf/provisioning/dashboards/cadvisor.json
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: '0644'
+      loop:
+        - { src: files/provider.yml, dest: /opt/grafana/conf/provisioning/dashboards/provider.yml }
+        - { src: files/cadvisor.json,               dest: /opt/grafana/conf/provisioning/dashboards/cadvisor.json }
+        - { src: files/dashboard.json,              dest: /opt/grafana/conf/provisioning/dashboards/nodeexporterfull.json }
       notify: Restart Grafana
 
     - name: Enable Grafana
