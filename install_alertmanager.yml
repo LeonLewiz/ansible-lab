@@ -22,6 +22,12 @@
         remote_src: true
         extra_opts: ['--strip-components=1']
 
+    - name: Template
+      template:
+        src: ./group_vars/all/templates/alertmanager.yml.j2
+        dest: /usr/local/bin/alertmanager/alertmanager.yml
+        mode: '0755'
+
     - name: Create systemd unit
       ansible.builtin.copy:
         dest: /etc/systemd/system/alertmanager.service
@@ -31,7 +37,7 @@
           After=network.target
 
           [Service]
-          ExecStart=/usr/local/bin/alertmanager/alertmanager --config.file=/usr/local/bin/alertmanager/alertmanager.yml --web.listen-address=0.0.0.0:9093
+          ExecStart=/usr/local/bin/alertmanager/alertmanager --cluster.listen-address= --config.file=/usr/local/bin/alertmanager/alertmanager.yml --web.listen-address=0.0.0.0:9093
           Restart=always
 
           [Install]

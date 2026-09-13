@@ -27,6 +27,14 @@
         src: ~/ansible-lab/group_vars/all/templates/prometheus.yml.j2
         dest: /usr/local/bin/prometheus/prometheus.yml
         mode: '0755'
+      notify: Restart Prometheus
+
+    - name: Copy rules.yml
+      ansible.builtin.copy:
+        src: ./files/rules.yml
+        dest: /usr/local/bin/prometheus/rules.yml
+        remote_src: true
+      notify: Restart Prometheus
 
     - name: Create systemd unit
       ansible.builtin.copy:
@@ -42,6 +50,7 @@
 
           [Install]
           WantedBy=multi-user.target
+      notify: Restart Prometheus
 
     - name: Enable and start Prometheus
       ansible.builtin.systemd:
@@ -50,3 +59,8 @@
         enabled: true
         state: started
 
+  handlers:
+    - name: Restart Prometheus
+      ansible.builtin.systemd:
+        name: prometheus
+        state: restarted
