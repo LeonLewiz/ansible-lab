@@ -9,14 +9,14 @@ scrape_configs:
     static_configs:
       - targets:
 {% for host in groups['managed'] %}
-        - http://{{ hostvars[host].ansible_host }}:9100
+        - ['{{ hostvars[host]['ansible_host'] }}:9100']
 {% endfor %}
         - 192.168.13.130:9100
   - job_name: cadvisor
     static_configs:
       - targets:
 {% for host in groups['managed'] %}
-        - http://{{ hostvars[host].ansible_host }}:8080
+        - ['{{ hostvars[host]['ansible_host'] }}:8080']
 {% endfor %}
   - job_name: prometheus
     static_configs:
@@ -29,7 +29,7 @@ scrape_configs:
     static_configs:
       - targets:
 {% for host in groups['managed'] %}
-        - http://{{ hostvars[host].ansible_host }}:9090
+        - ['{{ hostvars[host]['ansible_host'] }}:9090']
 {% endfor %}
     relabel_configs:
       - source_labels: [__scheme__, __address__]
