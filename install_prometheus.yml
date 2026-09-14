@@ -1,5 +1,5 @@
 - name: Install Prometheus.
-  hosts: localhost
+  hosts: monitoring
   become: yes
   tasks:
     - name: Installing Prometheus.
