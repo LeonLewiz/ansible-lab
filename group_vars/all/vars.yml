@@ -1,0 +1,6 @@
+project_dir: /var/www/html/my-nginx-site
+db_host: db
+db_name: site_analytics
+db_user: myuser
+web_port: 9090
+backend_port: 8081

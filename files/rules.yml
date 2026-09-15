@@ -1,0 +1,11 @@
+groups:
+  - name: Blackbox Errors
+    rules:
+      - alert: SiteDown
+        expr: probe_success == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Site down!"
+          description: "Webiste {{ $labels.instance }} is unavailable for 1 minute!"

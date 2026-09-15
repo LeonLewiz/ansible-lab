@@ -1,0 +1,74 @@
+- name: Install Grafana.
+  hosts: monitoring
+  become: yes
+  tasks:
+    - name: Installing Grafana.
+      get_url:
+        url: https://dl.grafana.com/oss/release/grafana-13.2.1.linux-amd64.tar.gz
+        dest: /tmp/grafana-13.2.1.linux-amd64.tar.gz
+        checksum: sha256:849b3f17a0a318a2f1a681b663e9feb4e4fc7f70d43bb0b4ea07cd34b1987462
+
+    - name: Extract grafana
+      ansible.builtin.unarchive:
+        src: /tmp/grafana-13.2.1.linux-amd64.tar.gz
+        dest: /opt
+        remote_src: true
+        creates: /opt/grafana-13.2.1
+
+    - name: Symlink for stable path
+      ansible.builtin.file:
+        src: /opt/grafana-13.2.1
+        dest: /opt/grafana
+        state: link
+
+    - name: Create systemd unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/grafana.service
+        content: |
+          [Unit]
+          Description=Grafana
+          After=network.target
+
+          [Service]
+          ExecStart=/opt/grafana/bin/grafana server --homepath /opt/grafana
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+      notify: Restart Grafana
+
+    - name: Copy config for Grafana.
+      ansible.builtin.copy:
+        src: ./files/provisioning/datasources/prometheus.yml
+        dest: /opt/grafana/conf/provisioning/datasources/prometheus.yml
+        mode: 0644
+      notify: Restart Grafana
+
+    - name: Create dashboards provisioning dir
+      ansible.builtin.file:
+        path: /opt/grafana/conf/provisioning/dashboards
+        state: directory
+
+    - name: Copy provisioning files
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: '0644'
+      loop:
+        - { src: files/provider.yml, dest: /opt/grafana/conf/provisioning/dashboards/provider.yml }
+        - { src: files/cadvisor.json,               dest: /opt/grafana/conf/provisioning/dashboards/cadvisor.json }
+        - { src: files/dashboard.json,              dest: /opt/grafana/conf/provisioning/dashboards/nodeexporterfull.json }
+      notify: Restart Grafana
+
+    - name: Enable Grafana
+      ansible.builtin.systemd:
+        name: grafana
+        daemon_reload: true
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Restart Grafana
+      ansible.builtin.systemd:
+        name: grafana
+        state: restarted
