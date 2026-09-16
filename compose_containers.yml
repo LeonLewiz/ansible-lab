@@ -1,0 +1,20 @@
+- name: Clone repository.
+  hosts: managed
+  become: yes
+  tasks:
+    - name: Git clone.
+      git:
+        repo: https://github.com/LeonLewiz/my-nginx-site.git
+        dest: /var/www/html/my-nginx-site
+
+    - name: Copy secrets to managed nodes.
+      template:
+        src: group_vars/all/templates/env.j2
+        dest: /var/www/html/my-nginx-site/.env
+        mode: '0600'
+
+    - name: Compose the containers.
+      community.docker.docker_compose_v2:
+        project_src: "{{ project_dir }}"
+        state: present
+        build: policy
