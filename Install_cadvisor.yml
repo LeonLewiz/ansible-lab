@@ -1,5 +1,5 @@
 - name: Install cAdvisor.
-  hosts: all:!monitoring
+  hosts: managed
   become: yes
   tasks:
 
