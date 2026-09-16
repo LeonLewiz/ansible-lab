@@ -1,5 +1,5 @@
 - name: Install node exporter.
-  hosts: all
+  hosts: managed
   become: yes
   tasks:
     - name: Installing node exporter.
